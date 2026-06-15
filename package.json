@@ -1,0 +1,22 @@
+﻿{
+  "name": "xray-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Xray Cloud test case management",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "axios": "latest",
+    "dotenv": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
+  "license": "MIT"
+}
