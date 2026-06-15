@@ -6,7 +6,8 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibChecks": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "include": ["src/**/*"]
 }
