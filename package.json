@@ -1,22 +1,30 @@
-﻿{
+{
   "name": "xray-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for Xray Cloud test case management",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "test": "node --require ts-node/register --test src/tools/testCases.test.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "latest",
-    "axios": "latest",
-    "dotenv": "latest"
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "axios": "1.18.0",
+    "dotenv": "17.4.2",
+    "express": "4.22.2",
+    "express-rate-limit": "8.5.2",
+    "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/node": "latest",
-    "ts-node": "latest",
-    "typescript": "latest"
+    "@types/express": "4.17.25",
+    "@types/node": "25.9.3",
+    "ts-node": "10.9.2",
+    "typescript": "6.0.3"
   },
   "license": "MIT"
 }
