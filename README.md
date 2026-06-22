@@ -4,6 +4,11 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that c
 
 Manage your Xray test cases, executions, and traceability through natural language — no Xray UI required.
 
+## Purpose
+
+Built to connect with Claude Desktop and CLI-based workflows for streamlined development and automation.
+If you find any issues, bugs, or opportunities for improvement, please open a Pull Request (PR) with your proposed changes.
+
 ---
 
 ## What It Does
