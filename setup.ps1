@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 $ErrorActionPreference = 'Stop'
 
 $ProjectRoot = $PSScriptRoot
@@ -8,14 +8,14 @@ function Write-Ok([string]$msg)   { Write-Host "   OK  $msg" -ForegroundColor Gr
 function Write-Warn([string]$msg) { Write-Host "  WARN $msg" -ForegroundColor Yellow }
 function Abort([string]$msg)      { Write-Host "`nERROR: $msg" -ForegroundColor Red; exit 1 }
 
-# ── 1. Node.js check ──────────────────────────────────────────────────────────
+# -- 1. Node.js check ----------------------------------------------------------
 Write-Step "Checking Node.js"
 try { $nodeVersion = node --version 2>$null } catch { Abort "Node.js not found. Install 18+ from https://nodejs.org" }
 $nodeMajor = [int]($nodeVersion -replace 'v(\d+).*','$1')
 if ($nodeMajor -lt 18) { Abort "Node.js 18+ required. Current: $nodeVersion" }
 Write-Ok "Node.js $nodeVersion"
 
-# ── 2. npm install ────────────────────────────────────────────────────────────
+# -- 2. npm install ------------------------------------------------------------
 Write-Step "Installing dependencies"
 Push-Location $ProjectRoot
 try {
@@ -24,7 +24,7 @@ try {
 } finally { Pop-Location }
 Write-Ok "Dependencies installed"
 
-# ── 3. Build ──────────────────────────────────────────────────────────────────
+# -- 3. Build ------------------------------------------------------------------
 Write-Step "Building TypeScript"
 Push-Location $ProjectRoot
 try {
@@ -33,7 +33,7 @@ try {
 } finally { Pop-Location }
 Write-Ok "Build succeeded -> dist/stdio.js"
 
-# ── 4. Credentials ────────────────────────────────────────────────────────────
+# -- 4. Credentials ------------------------------------------------------------
 Write-Step "Xray API credentials"
 $envFile = Join-Path $ProjectRoot '.env.local'
 
@@ -56,12 +56,12 @@ $clientSecret = Read-Host "  XRAY_CLIENT_SECRET$promptSecret"
 if ($clientSecret -eq '' -and $existingSecret) { $clientSecret = $existingSecret }
 if ($clientSecret -eq '') { Abort "XRAY_CLIENT_SECRET is required" }
 
-# Write without BOM — dotenv is sensitive to the BOM marker
+# Write without BOM - dotenv is sensitive to the BOM marker
 $envContent = "XRAY_CLIENT_ID=$clientId`nXRAY_CLIENT_SECRET=$clientSecret"
 [System.IO.File]::WriteAllText($envFile, $envContent, [System.Text.UTF8Encoding]::new($false))
 Write-Ok ".env.local written"
 
-# ── 5. Claude Desktop config ──────────────────────────────────────────────────
+# -- 5. Claude Desktop config --------------------------------------------------
 Write-Step "Registering MCP server in Claude Desktop"
 
 # Claude Desktop can live in three locations depending on install type.
@@ -94,7 +94,7 @@ if (-not $hasMcp -or $null -eq $config.mcpServers) {
     $config | Add-Member -MemberType NoteProperty -Name 'mcpServers' -Value ([PSCustomObject]@{})
 }
 
-# Build xray entry — credentials stay in .env.local, not in the config file
+# Build xray entry - credentials stay in .env.local, not in the config file
 $xrayEntry = [PSCustomObject]@{
     command = 'node'
     args    = @($stdioPath)
@@ -109,7 +109,7 @@ $json = $config | ConvertTo-Json -Depth 10
 [System.IO.File]::WriteAllText($claudeConfigPath, $json, [System.Text.UTF8Encoding]::new($false))
 Write-Ok "Config updated: $claudeConfigPath"
 
-# ── 6. Claude Code (CLI) ──────────────────────────────────────────────────────
+# -- 6. Claude Code (CLI) ------------------------------------------------------
 Write-Step "Registering MCP server in Claude Code"
 $claudeCmd = Get-Command claude -ErrorAction SilentlyContinue
 if ($claudeCmd) {
@@ -118,15 +118,16 @@ if ($claudeCmd) {
     if ($LASTEXITCODE -eq 0) {
         Write-Ok "Registered in Claude Code (user scope)"
     } else {
-        Write-Warn "Could not register in Claude Code — run manually: claude mcp add xray node `"$stdioPath`" --scope user"
+        Write-Warn "Could not register in Claude Code - run manually: claude mcp add xray node `"$stdioPath`" --scope user"
     }
 } else {
-    Write-Warn "Claude Code CLI not found — skipping. If you install it later, run: claude mcp add xray node `"$stdioPath`" --scope user"
+    Write-Warn "Claude Code CLI not found - skipping. If you install it later, run: claude mcp add xray node `"$stdioPath`" --scope user"
 }
 
-# ── Done ──────────────────────────────────────────────────────────────────────
+# -- Done ----------------------------------------------------------------------
 Write-Host ""
 Write-Host "  Setup complete." -ForegroundColor Green
 Write-Host "  - Restart Claude Desktop to load the Xray tools there." -ForegroundColor Green
 Write-Host "  - Start a new Claude Code session to use the Xray tools there." -ForegroundColor Green
 Write-Host ""
+
